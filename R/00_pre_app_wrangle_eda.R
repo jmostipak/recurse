@@ -6,7 +6,8 @@
 # set up environment ------------------------------------------------------
 library(readr)
 library(dplyr)
-library(ggplot2)
+library(tidyr)
+library(ggvis)
 library(here)
 library(skimr)
 
@@ -58,26 +59,55 @@ sy1617_wrangle_02 %>%
   group_by(group) %>% 
   summarise(n = n())
 
-sy1617_plot <- sy1617_wrangle_02
-
-
 # write data to file ------------------------------------------------------
+math <- sy1617_wrangle_02 %>% 
+  filter(subject == "math") %>% 
+  select(-subject, -num, -denom, -percent) %>% 
+  rename(math_rate = rate)
+
+sy1617_plot <- sy1617_wrangle_02 %>% 
+  filter(subject == "reading") %>% 
+  select(-subject, -num, -denom, -percent) %>% 
+  rename(reading_rate = rate) %>% 
+  left_join(math, by = c("group", "district_name", "campus_name",
+                         "year", "grade_band", "grade", 
+                         "proficiency"))
 
 write_csv(sy1617_plot, here("data", "wrangled_school_data.csv"))
 
 # graphs for app ----------------------------------------------------------
 #' data to use: sy1617_plot
 #' model after this: https://shiny.rstudio.com/gallery/movie-explorer.html
-movies %>%
-  ggvis(x = xvar, y = yvar) %>%
-  layer_points(size := 50, size.hover := 200,
-               fillOpacity := 0.2, fillOpacity.hover := 0.5,
-               stroke = ~has_oscar, key := ~ID) %>%
-  add_tooltip(movie_tooltip, "hover") %>%
-  add_axis("x", title = xvar_name) %>%
-  add_axis("y", title = yvar_name) %>%
-  add_legend("stroke", title = "Won Oscar", values = c("Yes", "No")) %>%
-  scale_nominal("stroke", domain = c("Yes", "No"),
-                range = c("orange", "#aaa")) %>%
-  set_options(width = 500, height = 500)
 
+
+sy1617_plot %>% 
+  filter(year == 17,
+         reading_rate > 0 & reading_rate < 100,
+         math_rate > 0 & math_rate < 100,
+         district_name == "DALLAS ISD") %>% 
+  ggvis(~math_rate, ~reading_rate, fill = ~proficiency) %>% 
+  layer_points(size := 50, size.hover := 200,
+             fillOpacity := 0.2, fillOpacity.hover := 0.5,
+             stroke = ~proficiency)
+
+# # code from example app - uses ggvis
+# movies %>%
+#   ggvis(x = xvar, y = yvar) %>%
+#   layer_points(size := 50, size.hover := 200,
+#                fillOpacity := 0.2, fillOpacity.hover := 0.5,
+#                stroke = ~has_oscar, key := ~ID) %>%
+#   add_tooltip(movie_tooltip, "hover") %>%
+#   add_axis("x", title = xvar_name) %>%
+#   add_axis("y", title = yvar_name) %>%
+#   add_legend("stroke", title = "Won Oscar", values = c("Yes", "No")) %>%
+#   scale_nominal("stroke", domain = c("Yes", "No"),
+#                 range = c("orange", "#aaa")) %>%
+#   set_options(width = 500, height = 500)
+
+
+# clean it up! ------------------------------------------------------------
+
+rm(initial_import, 
+   sy1617_import, 
+   sy1617_wrangle, sy1617_wrangle_02,
+   math)
