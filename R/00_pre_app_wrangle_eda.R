@@ -58,8 +58,26 @@ sy1617_wrangle_02 %>%
   group_by(group) %>% 
   summarise(n = n())
 
+sy1617_plot <- sy1617_wrangle_02
+
+
+# write data to file ------------------------------------------------------
+
+write_csv(sy1617_plot, here("data", "wrangled_school_data.csv"))
 
 # graphs for app ----------------------------------------------------------
-#' data to use: sy1617_wrangle_02
-#' will write to file to pull into Shiny app
+#' data to use: sy1617_plot
 #' model after this: https://shiny.rstudio.com/gallery/movie-explorer.html
+movies %>%
+  ggvis(x = xvar, y = yvar) %>%
+  layer_points(size := 50, size.hover := 200,
+               fillOpacity := 0.2, fillOpacity.hover := 0.5,
+               stroke = ~has_oscar, key := ~ID) %>%
+  add_tooltip(movie_tooltip, "hover") %>%
+  add_axis("x", title = xvar_name) %>%
+  add_axis("y", title = yvar_name) %>%
+  add_legend("stroke", title = "Won Oscar", values = c("Yes", "No")) %>%
+  scale_nominal("stroke", domain = c("Yes", "No"),
+                range = c("orange", "#aaa")) %>%
+  set_options(width = 500, height = 500)
+
