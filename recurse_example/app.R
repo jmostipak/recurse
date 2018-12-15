@@ -3,6 +3,7 @@
 #' activity add reactivity via either Input widgets or R2D3
 
 library(shiny)
+library(ggvis)
 library(here)
 
 data <- read_csv(here("data", "wrangled_school_data.csv"))
