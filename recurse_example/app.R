@@ -8,40 +8,42 @@ library(here)
 
 data <- read_csv(here("data", "wrangled_school_data.csv"))
 
-# Define UI for application that draws a histogram
+# defining the UI for app
 ui <- fluidPage(
    
-   # Application title
-   titlePanel("Old Faithful Geyser Data"),
+   # app title
+   titlePanel("DISD Campus Math and Reading rates for 2017"),
    
-   # Sidebar with a slider input for number of bins 
+   # app sidebar for slider input
    sidebarLayout(
-      sidebarPanel(
+      sidebarPanel("Input widgets for reactivity will go here"
       ),
       
-      # Show a plot of the generated distribution
+      # plot of sample data
       mainPanel(
-         plotOutput("distPlot")
+        ggvisOutput("plot1")
       )
    )
 )
 
-# Define server logic required to draw a histogram
+# Define server logic required to draw plot
 server <- function(input, output) {
    
-   output$distPlot <- renderPlot({
-      # generate bins based on input$bins from ui.R
+   vis <- reactive({
      data %>% 
        filter(year == 17,
               reading_rate > 0 & reading_rate < 100,
-              math_rate > 0 & math_rate < 100) %>% 
+              math_rate > 0 & math_rate < 100,
+              district_name == "DALLAS ISD") %>% 
        ggvis(~math_rate, ~reading_rate, fill = ~proficiency) %>% 
        layer_points(size := 50, size.hover := 200,
                     fillOpacity := 0.2, fillOpacity.hover := 0.5,
                     stroke = ~proficiency)
    })
+   
+   vis %>% bind_shiny("plot1")
 }
 
-# Run the application 
+# run app
 shinyApp(ui = ui, server = server)
 
