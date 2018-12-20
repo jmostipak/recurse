@@ -3,6 +3,8 @@
 #' activity add reactivity via either Input widgets or R2D3
 
 library(shiny)
+library(readr)
+library(dplyr)
 library(ggvis)
 library(here)
 
