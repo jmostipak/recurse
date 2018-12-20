@@ -12,25 +12,35 @@ data <- read_csv(here("data", "wrangled_school_data.csv"))
 
 # defining the UI for app
 ui <- fluidPage(
-   
-   # app title
-   titlePanel("DISD Campus Math and Reading rates for 2017"),
-   
-   # app sidebar for slider input
-   sidebarLayout(
-      sidebarPanel("Input widgets for reactivity will go here"
-      ),
-      
-      # plot of sample data
-      mainPanel(
-        ggvisOutput("plot1")
-      )
-   )
+  fluidRow(
+    
+    # app title
+    titlePanel("DISD Campus Math and Reading rates for 2017"),
+    
+    column(6, offset = 0.5,
+  
+           # app sidebar for slider input
+           sidebarLayout(
+             sidebarPanel("Input widgets for reactivity will go here"
+             ),
+             
+    column(8,
+           # plot of sample data
+           mainPanel(
+             ggvisOutput("plot1")
+             )
+           )         
+    )
+    )
+  )
 )
 
 # Define server logic required to draw plot
 server <- function(input, output) {
-   
+  
+  #' testing slider
+  #output$value <- renderPrint({input$slider1})
+  
    vis <- reactive({
      data %>% 
        filter(year == 17,
