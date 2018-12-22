@@ -1,7 +1,6 @@
 # refactoring notes -------------------------------------------------------
 #'  split into multiple files 
-#'    > utilize `source`
-#'    > packages 
+#'    > utilize `source` for packages and functions
 #'    > import and wrangle
 #'    > EDA
 #'  
@@ -16,8 +15,10 @@
 #'    
 #'  WRANGLE
 #'    > rename column headers 
+#'    > add source column to campus and district files before rbind
 #'  
 #'  EDA
+#'    > see Cox article, JK resources
 #'  
 
 
