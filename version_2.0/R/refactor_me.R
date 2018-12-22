@@ -1,5 +1,28 @@
-# packages used for analysis and visualization
+# refactoring notes -------------------------------------------------------
+#'  split into multiple files 
+#'    > utilize `source`
+#'    > packages 
+#'    > import and wrangle
+#'    > EDA
+#'  
+#'  SETUP
+#'    > modify package list prn
+#'    
+#'  IMPORT
+#'    > add guess_max to csv_import function
+#'    > assign path to data_path variable
+#'    > refactor import to join and select upstream from wrangle
+#'      -- regex for columns of interest
+#'    
+#'  WRANGLE
+#'    > rename column headers 
+#'  
+#'  EDA
+#'  
 
+
+# environment setup -------------------------------------------------------
+# packages used for analysis and visualization
 library(tidyverse) 
 library(here)   # file paths
 library(ggridges)  # ridgeplots
