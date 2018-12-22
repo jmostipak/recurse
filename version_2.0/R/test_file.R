@@ -13,4 +13,4 @@ source(here("version_2.0/R", "00_packages.R"))
 
 # staar_data_import -------------------------------------------------------
 cref <- read_csv(here("version_2.0/data/for_use", "CREF.csv"))
-
+skim(cref)
