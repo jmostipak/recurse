@@ -7,6 +7,7 @@ library(readr)
 library(dplyr)
 library(ggvis)
 library(here)
+library(magrittr)
 
 data <- read_csv(here("data", "wrangled_school_data.csv"))
 
@@ -15,16 +16,29 @@ ui <- fluidPage(
   fluidRow(
     
     # app title
-    titlePanel("DISD Campus Math and Reading rates for 2017"),
+    column(12, offset = 1, titlePanel("Campus Math and Reading rates for 2017")),
     
-    column(6, offset = 0.5,
+    #' filter widget
+    selectInput(inputId = "proficiency", label = "profs are meets or approaches",
+                choices = c("meets", "approaches")
+    ),
+    
+    hr(),
+    fluidRow(column(3, verbatimTextOutput("value"))),
+    
+    column(5, offset = 1,
   
            # app sidebar for slider input
            sidebarLayout(
              sidebarPanel("Input widgets for reactivity will go here"
              ),
+             #' possible filters: 
+             #' meets/approaches proficiencies
+             #' subject
+             #' three districts 
+
              
-    column(8,
+    column(6,
            # plot of sample data
            mainPanel(
              ggvisOutput("plot1")
@@ -38,15 +52,29 @@ ui <- fluidPage(
 # Define server logic required to draw plot
 server <- function(input, output) {
   
-  #' testing slider
-  #output$value <- renderPrint({input$slider1})
+  proficiency <- reactive({
+    
+    # m <- data %>% 
+    #   filter(proficiency >= proficiency) %>% 
+    #   arrange(math_rate, reading_rate)
+    
+    if (data$proficiency != "meets") {
+      proficiency <- paste0("%", data$proficiency, "%")
+      m <- data %>% filter(proficiency %in% proficiency)
+    }  
+  })
+  
+
+  
+  #' plot
   
    vis <- reactive({
      data %>% 
        filter(year == 17,
               reading_rate > 0 & reading_rate < 100,
               math_rate > 0 & math_rate < 100,
-              district_name == "DALLAS ISD") %>% 
+              district_name %in% c("DALLAS ISD", "FORT WORTH ISD", 
+                                   "UPLIFT EDUCATION")) %>% 
        ggvis(~math_rate, ~reading_rate, fill = ~proficiency) %>% 
        layer_points(size := 50, size.hover := 200,
                     fillOpacity := 0.2, fillOpacity.hover := 0.5,
