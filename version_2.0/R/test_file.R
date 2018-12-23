@@ -48,7 +48,7 @@ recode <- function(data){
 
 # staar_data_import -------------------------------------------------------
 data_path <- "version_2.0/data/for_use"
-cdref <- csv_import(data_path, "CREF.csv") 
+cref <- csv_import(data_path, "CREF.csv") 
 cstaar <- csv_import(data_path, "CSTAAR_ALL1.csv")
 dref <- csv_import(data_path, "DREF.csv")
 dstaar <- csv_import(data_path, "DSTAAR_ALL1.csv")
@@ -76,7 +76,8 @@ cstaar_02 <- cstaar_01 %>%
 campus <- cref %>% 
   select(CAMPUS, DISTNAME:GRDTYPE) %>% 
   select_all(~str_to_lower(.)) %>% 
-  left_join(cstaar_02, by = "campus")
+  left_join(cstaar_02, by = "campus") %>% 
+  rename(campus_rate = rate)
 
 
 # wrangling dstaar data ---------------------------------------------------
@@ -98,4 +99,27 @@ dstaar_02 <- dstaar_01 %>%
 district <- dref %>% 
   select(DISTRICT, D_RATING) %>% 
   select_all(~str_to_lower(.)) %>% 
-  left_join(dstaar_02, by = "district")
+  left_join(dstaar_02, by = "district") %>% 
+  rename(dist_rate = rate)
+
+
+# master file -------------------------------------------------------------
+campdist <- campus %>% 
+  left_join(district, by = c("district", "category", 
+                             "subject", "proficiency")) %>% 
+  mutate(campus_rate = as.numeric(campus_rate),
+         dist_rate = as.numeric(dist_rate)) 
+
+skim(campdist)
+
+
+# write it out ------------------------------------------------------------
+write_csv(here("version_2.0/data/for_use", "campdist.csv"))
+
+# clean it up -------------------------------------------------------------
+rm(campus, cref, 
+   cstaar, cstaar_01, cstaar_02,
+   csv_import, 
+   data_path, district, dref,
+   dstaar, dstaar_01, dstaar_02,
+   recode)

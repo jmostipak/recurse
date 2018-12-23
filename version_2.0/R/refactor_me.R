@@ -15,7 +15,7 @@
 #'    
 #'  WRANGLE
 #'    > rename column headers 
-#'    > add source column to campus and district files before rbind
+#'    > add campus_rate and district_rate signifiers before join
 #'  
 #'  EDA
 #'    > see Cox article, JK resources
