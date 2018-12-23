@@ -110,9 +110,6 @@ campdist <- campus %>%
   mutate(campus_rate = as.numeric(campus_rate),
          dist_rate = as.numeric(dist_rate)) 
 
-skim(campdist)
-
-
 # write it out ------------------------------------------------------------
 write_csv(here("version_2.0/data/for_use", "campdist.csv"))
 
