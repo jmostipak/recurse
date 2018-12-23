@@ -111,7 +111,7 @@ campdist <- campus %>%
          dist_rate = as.numeric(dist_rate)) 
 
 # write it out ------------------------------------------------------------
-write_csv(here("version_2.0/data/for_use", "campdist.csv"))
+write_csv(campdist, here("version_2.0/data/for_use", "campdist.csv"))
 
 # clean it up -------------------------------------------------------------
 rm(campus, cref, 
